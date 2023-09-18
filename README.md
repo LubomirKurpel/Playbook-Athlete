@@ -1,13 +1,13 @@
-# Sample Hardhat Project
+# Playbook Athlete Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This repo holds contracts and tests for Playbook Athlete web3 part of the project
 
-Try running some of the following tasks:
+To run the tests run the following commands in order:
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
+npm install
+npx hardhat compile
+yarn hardhat test ./test/custom_localhost.js
+or
+npx hardhat text (will run all the tests)
 ```
