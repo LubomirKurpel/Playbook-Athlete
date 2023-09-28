@@ -6,7 +6,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-contract PlaybookCollection is ERC1155, AccessControl {
+contract PlaybookCollectionV1 is ERC1155, AccessControl {
+	
+	public bool restrictMarketplace;
+	public bool marketplaceAddress;
 	
 	constructor(string memory _uri, address _ownerAddress, uint _numberOfTokens) ERC1155("") {
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
@@ -24,9 +27,27 @@ contract PlaybookCollection is ERC1155, AccessControl {
 		_setURI(_uri);
 	}
 	
+	function restrictMarketplace(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
+		restrictMarketplace = _value;
+	}
+	
+	function setMarketplaceAddress(address _address) external onlyRole(DEFAULT_ADMIN_ROLE) {
+		marketplaceAddress = _address;
+	}
+	
 	function burn(uint _numberOfTokens) external {
 		require(balanceOf(_msgSender(), 0) >= _numberOfTokens, "not token ID owner");
 		_burn(_msgSender(), 0, _numberOfTokens);
+	}
+	
+	// TODO: Write tests for marketplace restriction
+	function _update(address from, address to, uint256[] memory ids, uint256[] memory values) internal override {
+		
+		if (restrictMarketplace && marketplaceAddress != _msgSender()) {
+			revert("Not the allowed marketplace");
+		}
+		
+		super._update(from, to, ids, values);
 	}
 	
 }
@@ -34,7 +55,7 @@ contract PlaybookCollection is ERC1155, AccessControl {
 
 contract PlaybookFactoryV1 is Ownable {
 	
-	PlaybookCollection[] public collections;
+	PlaybookCollectionV1[] public collections;
 	
     constructor() Ownable() {}
 	
@@ -43,7 +64,7 @@ contract PlaybookFactoryV1 is Ownable {
 		address _ownerAddress,
 		uint _numberOfTokens
 	) external onlyOwner {
-		PlaybookCollection _collection = new PlaybookCollection(_uri, _ownerAddress, _numberOfTokens);
+		PlaybookCollectionV1 _collection = new PlaybookCollectionV1(_uri, _ownerAddress, _numberOfTokens);
 		collections.push(_collection);
     }
 	
