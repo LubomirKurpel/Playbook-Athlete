@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	
-	public bool restrictMarketplace;
-	public bool marketplaceAddress;
+	bool public restrictMarketplace;
+	address public marketplaceAddress;
 	
 	constructor(string memory _uri, address _ownerAddress, uint _numberOfTokens) ERC1155("") {
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
@@ -27,7 +27,7 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		_setURI(_uri);
 	}
 	
-	function restrictMarketplace(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
+	function setRestrictMarketplace(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		restrictMarketplace = _value;
 	}
 	
