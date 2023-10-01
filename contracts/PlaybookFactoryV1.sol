@@ -27,12 +27,12 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		_setURI(_uri);
 	}
 	
-	function setRestrictMarketplace(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
-		restrictMarketplace = _value;
+	function restrictTransfer(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
+		restrictTransfer = _value;
 	}
 	
-	function setMarketplaceAddress(address _address) external onlyRole(DEFAULT_ADMIN_ROLE) {
-		marketplaceAddress = _address;
+	function setAllowedContract(address _address, bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
+		allowedContracts[_address] = _value;
 	}
 	
 	function burn(uint _numberOfTokens) external {
