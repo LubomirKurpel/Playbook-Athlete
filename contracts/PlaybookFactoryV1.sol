@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -40,14 +40,47 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		_burn(_msgSender(), 0, _numberOfTokens);
 	}
 	
-	// TODO: Write tests for marketplace restriction
-	function _update(address from, address to, uint256[] memory ids, uint256[] memory values) internal override {
+	/**
+	 * @dev Openzeppelin repositary imports 0.8.0 version instead of newest 0.8.20, both of the versions can be
+	 * altered to suit our needs. Version 0.8.0 includes _beforeTokenTransfer hook while version 0.8.20 uses _update method
+	 * before each adjustment of balances, including minting, burning and transfers.
+	 *
+     * @dev Hook that is called before any token transfer. This includes minting
+     * and burning, as well as batched variants.
+     *
+     * The same hook is called on both single and batched variants. For single
+     * transfers, the length of the `ids` and `amounts` arrays will be 1.
+     *
+     * Calling conditions (for each `id` and `amount` pair):
+     *
+     * - When `from` and `to` are both non-zero, `amount` of ``from``'s tokens
+     * of token type `id` will be  transferred to `to`.
+     * - When `from` is zero, `amount` tokens of token type `id` will be minted
+     * for `to`.
+     * - when `to` is zero, `amount` of ``from``'s tokens of token type `id`
+     * will be burned.
+     * - `from` and `to` are never both zero.
+     * - `ids` and `amounts` have the same, non-zero length.
+     *
+     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
+     */
+	 
+	 // TODO: Write tests for marketplace restriction
+	function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal override {
 		
 		if (restrictMarketplace && marketplaceAddress != _msgSender()) {
 			revert("Not the allowed marketplace");
 		}
 		
-		super._update(from, to, ids, values);
+		super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+		
 	}
 	
 }
