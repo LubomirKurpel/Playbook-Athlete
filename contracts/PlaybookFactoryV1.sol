@@ -27,7 +27,7 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		_setURI(_uri);
 	}
 	
-	function restrictTransfer(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
+	function setRestrictTransfer(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		restrictTransfer = _value;
 	}
 	
@@ -40,8 +40,12 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		_burn(_msgSender(), 0, _numberOfTokens);
 	}
 	
-	function isContract(address _addr) view returns (bool) {
-		return _addr.code.length > 0;
+	function isContract(address _addr) private returns (bool) {
+		uint32 size;
+		assembly {
+			size := extcodesize(_addr)
+		}
+		return (size > 0);
 	}
 	
     /**
