@@ -40,11 +40,11 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		_burn(_msgSender(), 0, _numberOfTokens);
 	}
 	
-	/**
-	 * @dev Openzeppelin repositary imports 0.8.0 version instead of newest 0.8.20, both of the versions can be
-	 * altered to suit our needs. Version 0.8.0 includes _beforeTokenTransfer hook while version 0.8.20 uses _update method
-	 * before each adjustment of balances, including minting, burning and transfers.
-	 *
+    /**
+     * @dev Openzeppelin repositary imports 0.8.0 version instead of newest 0.8.20, both of the versions can be
+     * altered to suit our needs. Version 0.8.0 includes _beforeTokenTransfer hook while version 0.8.20 uses _update method
+     * before each adjustment of balances, including minting, burning and transfers.
+     *
      * @dev Hook that is called before any token transfer. This includes minting
      * and burning, as well as batched variants.
      *
@@ -68,12 +68,12 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	 // TODO: Write tests for marketplace restriction
 	function _beforeTokenTransfer(
         address operator,
-        address from,
+		address from,
         address to,
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) internal override {
+	) internal override {
 		
 		if (restrictMarketplace && marketplaceAddress != _msgSender()) {
 			revert("Not the allowed marketplace");
@@ -88,21 +88,21 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 
 contract PlaybookFactoryV1 is Ownable {
 	
-	PlaybookCollectionV1[] public collections;
+    PlaybookCollectionV1[] public collections;
 	
     constructor() Ownable() {}
 	
-	function createCollection(
+    function createCollection(
 		string memory _uri,
 		address _ownerAddress,
 		uint _numberOfTokens
-	) external onlyOwner {
+    ) external onlyOwner {
 		PlaybookCollectionV1 _collection = new PlaybookCollectionV1(_uri, _ownerAddress, _numberOfTokens);
 		collections.push(_collection);
     }
 	
 	// Getters
-	function getCollectionsLength() public view returns (uint) {
+    function getCollectionsLength() public view returns (uint) {
         return collections.length;
     }
 	
