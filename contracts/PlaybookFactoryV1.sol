@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	
-	bool public restrictMarketplace;
-	address public marketplaceAddress;
+	bool public restrictTransfer;
+	mapping(address => bool) public allowedContracts;
 	
 	constructor(string memory _uri, address _ownerAddress, uint _numberOfTokens) ERC1155("") {
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
@@ -38,6 +38,10 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	function burn(uint _numberOfTokens) external {
 		require(balanceOf(_msgSender(), 0) >= _numberOfTokens, "not token ID owner");
 		_burn(_msgSender(), 0, _numberOfTokens);
+	}
+	
+	function isContract(address _addr) view returns (bool) {
+		return _addr.code.length > 0;
 	}
 	
     /**
@@ -75,8 +79,8 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
         bytes memory data
 	) internal override {
 		
-		if (restrictMarketplace && marketplaceAddress != _msgSender()) {
-			revert("Not the allowed marketplace");
+		if (restrictTransfer && isContract(to)) {
+			require(allowedContracts[to] == true, "Transfer not allowed");
 		}
 		
 		super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
