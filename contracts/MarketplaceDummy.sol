@@ -23,6 +23,7 @@ contract MarketplaceDummy {
 	
 	function dummyTransferNFT(address _transferFrom, address _transferTo, address _collectionContract, uint _numberOfTokens) external {
 		
+		console.log("Dummy marketplace address: ", address(this));
 		console.log("Dummy marketplace - NFT transfer event collection: ", _collectionContract);
 		console.log("Dummy marketplace - NFT transfer From: ", _transferFrom);
 		console.log("Dummy marketplace - NFT transfer To: ", _transferTo);

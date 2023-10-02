@@ -12,7 +12,7 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	mapping(address => bool) public allowedContracts;
 	
 	constructor(string memory _uri, address _ownerAddress, uint _numberOfTokens) ERC1155("") {
-		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+		_setupRole(DEFAULT_ADMIN_ROLE, tx.origin);
 		_setURI(_uri);
 		_mint(_ownerAddress, 0, _numberOfTokens, "");
 		
@@ -40,7 +40,7 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		_burn(_msgSender(), 0, _numberOfTokens);
 	}
 	
-	function isContract(address _addr) private returns (bool) {
+	function isContract(address _addr) private view returns (bool) {
 		uint32 size;
 		assembly {
 			size := extcodesize(_addr)
@@ -48,48 +48,24 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 		return (size > 0);
 	}
 	
-    /**
-     * @dev Openzeppelin repositary imports 0.8.0 version instead of newest 0.8.20, both of the versions can be
-     * altered to suit our needs. Version 0.8.0 includes _beforeTokenTransfer hook while version 0.8.20 uses _update method
-     * before each adjustment of balances, including minting, burning and transfers.
+	/**
+     * @dev Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`,
      *
-     * @dev Hook that is called before any token transfer. This includes minting
-     * and burning, as well as batched variants.
+     * Emits an {ApprovalForAll} event.
      *
-     * The same hook is called on both single and batched variants. For single
-     * transfers, the length of the `ids` and `amounts` arrays will be 1.
+     * Requirements:
      *
-     * Calling conditions (for each `id` and `amount` pair):
-     *
-     * - When `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * of token type `id` will be  transferred to `to`.
-     * - When `from` is zero, `amount` tokens of token type `id` will be minted
-     * for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens of token type `id`
-     * will be burned.
-     * - `from` and `to` are never both zero.
-     * - `ids` and `amounts` have the same, non-zero length.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
+     * - `operator` cannot be the caller.
      */
-	 
-	 // TODO: Write tests for marketplace restriction
-	function _beforeTokenTransfer(
-        address operator,
-		address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-	) internal override {
+	function setApprovalForAll(address operator, bool approved) public override {
 		
-		if (restrictTransfer && isContract(to)) {
-			require(allowedContracts[to] == true, "Transfer not allowed");
+		if (restrictTransfer && isContract(operator)) {
+			require(allowedContracts[operator] == true, "Approve not allowed");
 		}
 		
-		super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+        super.setApprovalForAll(operator, approved);
 		
-	}
+    }
 	
 }
 
