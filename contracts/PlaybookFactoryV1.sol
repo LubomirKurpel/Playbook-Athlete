@@ -11,8 +11,9 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	bool public restrictTransfer;
 	mapping(address => bool) public allowedContracts;
 	
+	
 	constructor(string memory _uri, address _ownerAddress, uint _numberOfTokens) ERC1155("") {
-		_setupRole(DEFAULT_ADMIN_ROLE, tx.origin);
+		_grantRole(DEFAULT_ADMIN_ROLE, tx.origin);
 		_setURI(_uri);
 		_mint(_ownerAddress, 0, _numberOfTokens, "");
 		
@@ -21,6 +22,13 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	
 	function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+	
+	/**
+     * @dev OpenSea needs contractURI() function to see metadata
+     */
+	function contractURI() public view returns (string memory) {
+        return uri(0);
     }
 	
 	function changeUri(string memory _uri) external onlyRole(DEFAULT_ADMIN_ROLE) {
