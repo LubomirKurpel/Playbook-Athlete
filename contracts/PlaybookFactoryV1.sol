@@ -10,12 +10,13 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	
 	bool public restrictTransfer;
 	mapping(address => bool) public allowedContracts;
+	string public name = "Playbook Athlete's Collection"; // For OpenSea naming of ERC1155 Contract
 	
-	
-	constructor(string memory _uri, address _ownerAddress, uint _numberOfTokens) ERC1155("") {
+	constructor(string memory _uri, address _ownerAddress, uint _numberOfTokens, string memory _name) ERC1155("") {
 		_grantRole(DEFAULT_ADMIN_ROLE, tx.origin);
 		_setURI(_uri);
 		_mint(_ownerAddress, 0, _numberOfTokens, "");
+		name = _name;
 		
 		console.log(address(this));
 	}
@@ -33,6 +34,10 @@ contract PlaybookCollectionV1 is ERC1155, AccessControl {
 	
 	function changeUri(string memory _uri) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		_setURI(_uri);
+	}
+	
+	function changeCollectionName(string memory _name) external onlyRole(DEFAULT_ADMIN_ROLE) {
+		name = _name;
 	}
 	
 	function setRestrictTransfer(bool _value) external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -87,9 +92,10 @@ contract PlaybookFactoryV1 is Ownable {
     function createCollection(
 		string memory _uri,
 		address _ownerAddress,
-		uint _numberOfTokens
+		uint _numberOfTokens,
+		string memory _collectionName
     ) external onlyOwner {
-		PlaybookCollectionV1 _collection = new PlaybookCollectionV1(_uri, _ownerAddress, _numberOfTokens);
+		PlaybookCollectionV1 _collection = new PlaybookCollectionV1(_uri, _ownerAddress, _numberOfTokens, _collectionName);
 		collections.push(_collection);
     }
 	
