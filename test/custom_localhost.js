@@ -43,7 +43,7 @@ describe("Playbook Athletes Localhost Tests", function () {
   it("Should test deployment of child collection contract", async function () {
 	
 	// Deploy collection through factory contract
-	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100);
+	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100, "Collection name");
 	
 	// Get new deployment address
 	let collectionAddress = await PlaybookFactory_Contract.getCollectionAddressByIndex(0);
@@ -55,7 +55,7 @@ describe("Playbook Athletes Localhost Tests", function () {
   it("Should test transfer of NFTs", async function () {
 	
 	// Deploy collection through factory contract
-	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100);
+	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100, "Collection name");
 	
 	// Get new deployment address
 	let collectionAddress = await PlaybookFactory_Contract.getCollectionAddressByIndex(0);
@@ -104,7 +104,7 @@ describe("Playbook Athletes Localhost Tests", function () {
   it("Should test transfer through MarketplaceDummy contract", async function () {
 	
 	// Deploy collection through factory contract
-	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100);
+	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100, "Collection name");
 	
 	// Get new deployment address
 	let collectionAddress = await PlaybookFactory_Contract.getCollectionAddressByIndex(0);
@@ -151,7 +151,7 @@ describe("Playbook Athletes Localhost Tests", function () {
   it("Should lock transfer only through MarketplaceDummy_1 contract, not MarketplaceDummy_2 contract", async function () {
 	
 	// Deploy collection through factory contract
-	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100);
+	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100, "Collection name");
 	
 	// Get new deployment address
 	let collectionAddress = await PlaybookFactory_Contract.getCollectionAddressByIndex(0);
@@ -232,6 +232,23 @@ describe("Playbook Athletes Localhost Tests", function () {
 	
 	console.log("randomPerson_2 balance: ", balanceOf);
 	
+	
+  });
+  
+  it("Should test if precomputed address matches the deployed child contract address", async function () {
+	
+	// Get new deployment address
+	let computedAddress = await PlaybookFactory_Contract.getFutureCollectionAddress();
+	
+	console.log("Precomputed address: " + computedAddress);
+	
+	// Deploy collection through factory contract
+	await PlaybookFactory_Contract.createCollection("", randomPerson.address, 100, "Collection name");
+	
+	// Get new deployment address
+	let collectionAddress = await PlaybookFactory_Contract.getCollectionAddressByIndex(0);
+	
+	console.log("Actual deployed address: " + collectionAddress);
 	
   });
   
